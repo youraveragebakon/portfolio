@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RBX Dev Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d0d0d;color:#e0e0e0;font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+
+nav{position:sticky;top:0;z-index:100;background:#0d0d0d;border-bottom:1px solid #1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px}
+.nav-logo{font-family:'Share Tech Mono',monospace;font-size:14px;color:#fff;letter-spacing:.05em}
+.nav-logo span{color:#3a3a3a}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{background:none;border:none;color:#555;font-family:'Inter',sans-serif;font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:color .15s,background .15s}
+.nav-tab:hover{color:#bbb;background:#161616}
+.nav-tab.active{color:#fff;background:#1a1a1a}
+.console-btn{background:none;border:1px solid #222;color:#444;font-family:'Share Tech Mono',monospace;font-size:11px;padding:5px 12px;border-radius:6px;cursor:pointer;transition:.15s}
+.console-btn:hover{color:#aaa;border-color:#3a3a3a}
+
+.page{display:none;max-width:860px;margin:0 auto;padding:48px 32px}
+.page.active{display:block}
+
+.hero{padding:64px 0 40px}
+.hero-tag{font-family:'Share Tech Mono',monospace;font-size:11px;color:#333;letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:clamp(28px,5vw,48px);font-weight:600;line-height:1.1;color:#fff;margin-bottom:14px}
+.hero h1 em{font-style:normal;color:#3a3a3a}
+.hero p{color:#555;max-width:440px;font-size:14px}
+.hero-actions{display:flex;gap:8px;margin-top:28px}
+.btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:.15s;border:none}
+.btn-primary{background:#fff;color:#000}
+.btn-primary:hover{background:#ddd}
+.btn-ghost{background:none;color:#666;border:1px solid #222}
+.btn-ghost:hover{color:#bbb;border-color:#3a3a3a}
+
+.section-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:#2a2a2a;letter-spacing:.15em;text-transform:uppercase;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid #161616}
+
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.product-card{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:18px;transition:border-color .15s}
+.product-card:hover{border-color:#2a2a2a}
+.product-name{font-weight:500;color:#e0e0e0;margin-bottom:5px;font-size:14px}
+.product-desc{font-size:12px;color:#444;margin-bottom:14px;line-height:1.55}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:'Share Tech Mono',monospace;font-size:14px;color:#ccc}
+.product-price span{color:#333;font-size:11px}
+.buy-btn{background:#161616;border:1px solid #222;color:#888;font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer;transition:.15s}
+.buy-btn:hover{background:#1e1e1e;color:#ddd;border-color:#333}
+.product-badge{display:inline-block;font-size:10px;font-family:'Share Tech Mono',monospace;padding:2px 7px;border-radius:4px;margin-bottom:8px;background:#161616;color:#444;border:1px solid #1e1e1e}
+.product-badge.popular{color:#6a9a4a;border-color:#283318;background:#131a0e}
+.empty-shop{text-align:center;padding:56px 0;color:#2a2a2a;font-family:'Share Tech Mono',monospace;font-size:12px}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.about-bio{color:#555;line-height:1.85}
+.about-bio h2{font-size:18px;font-weight:600;color:#ddd;margin-bottom:14px}
+.about-bio p+p{margin-top:10px}
+.skills-list{display:flex;flex-direction:column;gap:10px}
+.skill-row{display:flex;align-items:center;font-size:12px}
+.skill-name{color:#444;width:130px;flex-shrink:0}
+.skill-bar{flex:1;height:1px;background:#1a1a1a;margin:0 12px}
+.skill-fill{height:100%;background:#2a2a2a}
+.skill-pct{color:#333;font-family:'Share Tech Mono',monospace;font-size:10px;min-width:26px;text-align:right}
+.stat-blocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px}
+.stat-block{background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:14px}
+.stat-num{font-size:22px;font-weight:600;color:#ddd}
+.stat-lbl{font-size:11px;color:#333;margin-top:2px}
+
+.work-list{display:flex;flex-direction:column;gap:8px}
+.work-item{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:18px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;transition:border-color .15s}
+.work-item:hover{border-color:#242424}
+.work-info h3{font-size:13px;font-weight:500;color:#ddd;margin-bottom:4px}
+.work-info p{font-size:12px;color:#444;line-height:1.55}
+.work-tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.tag{font-size:10px;font-family:'Share Tech Mono',monospace;padding:2px 7px;border-radius:4px;background:#141414;color:#3a3a3a;border:1px solid #1a1a1a}
+.work-type{font-size:10px;font-family:'Share Tech Mono',monospace;color:#2a2a2a;white-space:nowrap}
+
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.example-card{background:#111;border:1px solid #1a1a1a;border-radius:10px;overflow:hidden}
+.example-preview{background:#090909;border-bottom:1px solid #161616;padding:18px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#2a2a2a;line-height:1.75;min-height:130px}
+.kw{color:#4a6a3a}.fn{color:#3a5a7a}.str{color:#6a4a2a}.cm{color:#222}
+.example-body{padding:14px}
+.example-title{font-size:12px;font-weight:500;color:#aaa;margin-bottom:3px}
+.example-desc{font-size:11px;color:#333;line-height:1.5}
+
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pricing-card{background:#111;border:1px solid #1a1a1a;border-radius:10px;padding:22px}
+.pricing-card.featured{border-color:#252525;background:#131313}
+.pricing-tier{font-family:'Share Tech Mono',monospace;font-size:10px;color:#333;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.pricing-price{font-size:26px;font-weight:600;color:#ddd;margin-bottom:3px}
+.pricing-price sub{font-size:13px;font-weight:400;color:#444}
+.pricing-note{font-size:11px;color:#333;margin-bottom:18px}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:22px}
+.pricing-features li{font-size:12px;color:#3a3a3a;padding-left:14px;position:relative}
+.pricing-features li::before{content:'—';position:absolute;left:0;color:#222}
+.pricing-features li.yes{color:#666}
+.pricing-features li.yes::before{content:'✓';color:#3a5a2a}
+.pricing-contact{width:100%;padding:9px;background:#161616;border:1px solid #222;color:#666;border-radius:7px;font-size:12px;cursor:pointer;transition:.15s;font-family:'Inter',sans-serif}
+.pricing-contact:hover{background:#1e1e1e;color:#aaa}
+.pricing-contact.feat{background:#e0e0e0;color:#111;border:none}
+.pricing-contact.feat:hover{background:#fff}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center;padding:0 0 28px}
+.overlay.open{display:flex}
+.console-panel{background:#0a0a0a;border:1px solid #1e1e1e;border-radius:12px;width:100%;max-width:660px;overflow:hidden}
+.console-header{background:#0f0f0f;border-bottom:1px solid #1a1a1a;padding:11px 16px;display:flex;align-items:center;justify-content:space-between}
+.console-title{font-family:'Share Tech Mono',monospace;font-size:11px;color:#333}
+.console-close{background:none;border:none;color:#333;font-size:16px;cursor:pointer;line-height:1;padding:0 2px}
+.console-close:hover{color:#888}
+.console-log{height:200px;overflow-y:auto;padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.75}
+.log-line.info{color:#3a3a3a}
+.log-line.ok{color:#4a7a3a}
+.log-line.err{color:#7a3a3a}
+.log-line.sys{color:#2a4a6a}
+.console-input-row{border-top:1px solid #161616;display:flex;align-items:center;padding:11px 16px;gap:8px}
+.console-prompt{font-family:'Share Tech Mono',monospace;font-size:11px;color:#2a2a2a}
+.console-input{flex:1;background:none;border:none;outline:none;font-family:'Share Tech Mono',monospace;font-size:12px;color:#ccc;caret-color:#fff}
+.console-run{background:#141414;border:1px solid #222;color:#444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 10px;border-radius:5px;cursor:pointer;transition:.15s}
+.console-run:hover{color:#aaa;border-color:#333}
+.console-help{padding:8px 16px 11px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#222;border-top:1px solid #131313;line-height:1.9}
+
+.toast{position:fixed;bottom:20px;right:20px;background:#111;border:1px solid #222;color:#aaa;font-size:12px;padding:9px 14px;border-radius:7px;z-index:300;opacity:0;transform:translateY(6px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:640px){
+  nav{padding:0 14px}.nav-tab{font-size:11px;padding:5px 8px}
+  .page{padding:36px 16px}
+  .about-grid,.examples-grid,.pricing-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">rbx<span>.</span>dev</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('shop',this)">Shop</button>
+    <button class="nav-tab" onclick="showPage('about',this)">About</button>
+    <button class="nav-tab" onclick="showPage('work',this)">Work</button>
+    <button class="nav-tab" onclick="showPage('examples',this)">Examples</button>
+    <button class="nav-tab" onclick="showPage('pricing',this)">Pricing</button>
+  </div>
+  <button class="console-btn" onclick="toggleConsole()">_ console</button>
+</nav>
+
+<!-- SHOP -->
+<div class="page active" id="page-shop">
+  <div class="hero">
+    <div class="hero-tag">Roblox Scripting Studio</div>
+    <h1>Scripts that <em>actually</em><br>work.</h1>
+    <p>Luau scripts, systems, and full games. Pick something off the shelf or commission something custom.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="showPage('pricing',document.querySelectorAll('.nav-tab')[4])">See pricing</button>
+      <button class="btn btn-ghost" onclick="showPage('work',document.querySelectorAll('.nav-tab')[2])">Past work</button>
+    </div>
+  </div>
+  <div class="section-label">Available scripts</div>
+  <div class="shop-grid" id="shop-grid">
+    <div class="empty-shop">connecting to db...</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="page" id="page-about">
+  <div style="padding-top:20px">
+    <div class="section-label">About me</div>
+    <div class="about-grid">
+      <div>
+        <div class="about-bio">
+          <h2>Hey, I script Roblox stuff.</h2>
+          <p>I've been writing Luau since 2020. I build combat systems, economy systems, admin tools, data stores, UI, and anything else you throw at me. I care about clean, readable code that doesn't break when someone joins with a bad connection.</p>
+          <p>I work solo — direct communication, fast turnaround. No middlemen, no templates passed off as custom work.</p>
+        </div>
+        <div class="stat-blocks">
+          <div class="stat-block"><div class="stat-num">50+</div><div class="stat-lbl">Scripts delivered</div></div>
+          <div class="stat-block"><div class="stat-num">3yr</div><div class="stat-lbl">Luau experience</div></div>
+          <div class="stat-block"><div class="stat-num">24h</div><div class="stat-lbl">Avg response time</div></div>
+          <div class="stat-block"><div class="stat-num">100%</div><div class="stat-lbl">Custom code</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Skills</div>
+        <div class="skills-list">
+          <div class="skill-row"><span class="skill-name">Luau / Scripting</span><div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div><span class="skill-pct">95%</span></div>
+          <div class="skill-row"><span class="skill-name">DataStore / Saving</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><span class="skill-name">Combat Systems</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div><span class="skill-pct">85%</span></div>
+          <div class="skill-row"><span class="skill-name">UI / ScreenGui</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div><span class="skill-pct">80%</span></div>
+          <div class="skill-row"><span class="skill-name">RemoteEvents</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div><span class="skill-pct">90%</span></div>
+          <div class="skill-row"><span class="skill-name">Module Scripts</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div><span class="skill-pct">88%</span></div>
+          <div class="skill-row"><span class="skill-name">Rojo / Git</span><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div><span class="skill-pct">70%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORK -->
+<div class="page" id="page-work">
+  <div style="padding-top:20px">
+    <div class="section-label">Previous work</div>
+    <div class="work-list">
+      <div class="work-item">
+        <div class="work-info">
+          <h3>Full Economy System</h3>
+          <p>Shop UI, currency, DataStore saving, admin commands, leaderboard for a tycoon-style game.</p>
+          <div class="work-tags"><span class="tag">DataStore</span><span class="tag">RemoteEvents</span><span class="tag">UI</span><span class="tag">Admin</span></div>
+        </div>
+        <div class="work-type">Commission</div>
+      </div>
+      <div class="work-item">
+        <div class="work-info">
+          <h3>Combat System v2</h3>
+          <p>Hitbox-based melee, combo strings, stun system, cooldowns. Damage replicated server-side.</p>
+          <div class="work-tags"><span class="tag">Hitbox</span><span class="tag">Animations</span><span class="tag">Server</span></div>
+        </div>
+        <div class="work-type">Commission</div>
+      </div>
+      <div class="work-item">
+        <div class="work-info">
+          <h3>Admin Command Panel</h3>
+          <p>Custom permission levels, kick/ban/teleport/speed commands, persistent ban logs via DataStore.</p>
+          <div class="work-tags"><span class="tag">Admin</span><span class="tag">DataStore</span><span class="tag">UI</span></div>
+        </div>
+        <div class="work-type">Shop release</div>
+      </div>
+      <div class="work-item">
+        <div class="work-info">
+          <h3>NPC Dialogue System</h3>
+          <p>Branching dialogue trees with quest triggers, proximity detection, and cutscene support.</p>
+          <div class="work-tags"><span class="tag">NPC</span><span class="tag">Quests</span><span class="tag">UI</span></div>
+        </div>
+        <div class="work-type">Commission</div>
+      </div>
+      <div class="work-item">
+        <div class="work-info">
+          <h3>Round-based Game Framework</h3>
+          <p>Lobby → intermission → round → results loop with spectator mode, vote system, map rotation.</p>
+          <div class="work-tags"><span class="tag">Framework</span><span class="tag">Rounds</span><span class="tag">Vote</span></div>
+        </div>
+        <div class="work-type">Commission</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAMPLES -->
+<div class="page" id="page-examples">
+  <div style="padding-top:20px">
+    <div class="section-label">Worked examples</div>
+    <div class="examples-grid">
+      <div class="example-card">
+        <div class="example-preview"><span class="cm">-- DataStore save on leave</span>
+<span class="kw">local</span> DS = game:GetService(<span class="str">"DataStoreService"</span>)
+<span class="kw">local</span> store = DS:GetDataStore(<span class="str">"PlayerData"</span>)
+
+game.Players.PlayerRemoving:<span class="fn">Connect</span>(<span class="kw">function</span>(plr)
+  <span class="kw">local</span> data = { coins = plr.leaderstats.Coins.Value }
+  store:<span class="fn">SetAsync</span>(plr.UserId, data)
+<span class="kw">end</span>)</div>
+        <div class="example-body">
+          <div class="example-title">DataStore save on leave</div>
+          <div class="example-desc">Persists player data on disconnect. Full version wraps in pcall.</div>
+        </div>
+      </div>
+      <div class="example-card">
+        <div class="example-preview"><span class="cm">-- Server-side hitbox check</span>
+<span class="kw">local function</span> <span class="fn">checkHit</span>(attacker, target)
+  <span class="kw">local</span> dist = (attacker.HumanoidRootPart.Position
+    - target.HumanoidRootPart.Position).<span class="fn">Magnitude</span>
+  <span class="kw">if</span> dist &lt;= 8 <span class="kw">then</span>
+    target.Humanoid:<span class="fn">TakeDamage</span>(25)
+  <span class="kw">end</span>
+<span class="kw">end</span></div>
+        <div class="example-body">
+          <div class="example-title">Server-side hit validation</div>
+          <div class="example-desc">Distance check on server prevents exploits. Damage applied server-side only.</div>
+        </div>
+      </div>
+      <div class="example-card">
+        <div class="example-preview"><span class="cm">-- Module script pattern</span>
+<span class="kw">local</span> Economy = {}
+
+<span class="kw">function</span> Economy.<span class="fn">AddCoins</span>(player, amount)
+  <span class="kw">local</span> coins = player.leaderstats.Coins
+  coins.Value = coins.Value + amount
+<span class="kw">end</span>
+
+<span class="kw">return</span> Economy</div>
+        <div class="example-body">
+          <div class="example-title">Module script pattern</div>
+          <div class="example-desc">Clean module structure — require once, reuse everywhere.</div>
+        </div>
+      </div>
+      <div class="example-card">
+        <div class="example-preview"><span class="cm">-- RemoteEvent shop purchase</span>
+<span class="kw">local</span> RE = game.ReplicatedStorage.Events
+  .<span class="fn">PurchaseItem</span>
+
+RE.OnServerEvent:<span class="fn">Connect</span>(<span class="kw">function</span>(plr, itemId)
+  <span class="kw">if</span> <span class="fn">canAfford</span>(plr, itemId) <span class="kw">then</span>
+    <span class="fn">giveItem</span>(plr, itemId)
+    <span class="fn">deductCost</span>(plr, itemId)
+  <span class="kw">end</span>
+<span class="kw">end</span>)</div>
+        <div class="example-body">
+          <div class="example-title">RemoteEvent shop purchase</div>
+          <div class="example-desc">Server validates and processes — client only fires the event.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="page" id="page-pricing">
+  <div style="padding-top:20px">
+    <div class="section-label">Pricing</div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-tier">Basic</div>
+        <div class="pricing-price">$10<sub>–$25</sub></div>
+        <div class="pricing-note">Simple scripts, small fixes</div>
+        <ul class="pricing-features">
+          <li class="yes">Single-purpose script</li>
+          <li class="yes">1 revision included</li>
+          <li class="yes">Delivered in 1–2 days</li>
+          <li>No system integration</li>
+          <li>No UI</li>
+        </ul>
+        <button class="pricing-contact" onclick="openDiscord()">Get in touch</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-tier">Standard</div>
+        <div class="pricing-price">$30<sub>–$80</sub></div>
+        <div class="pricing-note">Full systems &amp; features</div>
+        <ul class="pricing-features">
+          <li class="yes">Full system (combat, economy…)</li>
+          <li class="yes">UI included</li>
+          <li class="yes">DataStore saving</li>
+          <li class="yes">3 revisions</li>
+          <li class="yes">Delivered in 3–5 days</li>
+        </ul>
+        <button class="pricing-contact feat" onclick="openDiscord()">Get in touch</button>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-tier">Full Game</div>
+        <div class="pricing-price">$100<sub>+</sub></div>
+        <div class="pricing-note">Complete game scripting</div>
+        <ul class="pricing-features">
+          <li class="yes">Everything in Standard</li>
+          <li class="yes">Game framework</li>
+          <li class="yes">Admin panel included</li>
+          <li class="yes">Unlimited revisions</li>
+          <li class="yes">Timeline agreed upfront</li>
+        </ul>
+        <button class="pricing-contact" onclick="openDiscord()">Get in touch</button>
+      </div>
+    </div>
+    <p style="margin-top:20px;font-size:11px;color:#2a2a2a;font-family:'Share Tech Mono',monospace">USD. Payment via Robux (DevEx) or PayPal. Half upfront for orders over $50.</p>
+  </div>
+</div>
+
+<!-- CONSOLE -->
+<div class="overlay" id="overlay" onclick="closeOutside(event)">
+  <div class="console-panel">
+    <div class="console-header">
+      <span class="console-title">admin console — products db</span>
+      <button class="console-close" onclick="toggleConsole()">×</button>
+    </div>
+    <div class="console-log" id="console-log">
+      <div class="log-line sys">rbx.dev console — firebase realtime</div>
+      <div class="log-line info">type a command or see help below</div>
+    </div>
+    <div class="console-input-row">
+      <span class="console-prompt">&gt;_</span>
+      <input class="console-input" id="console-input" type="text" placeholder="?add name | desc | price | badge?" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')runCommand()">
+      <button class="console-run" onclick="runCommand()">run</button>
+    </div>
+    <div class="console-help">
+      ?add [name] | [desc] | [price] | [badge?] — add product<br>
+      ?remove [name] — delete&nbsp;&nbsp;&nbsp;?update [name] | [field] | [value] — edit<br>
+      ?list — show all&nbsp;&nbsp;&nbsp;?export — download db.json&nbsp;&nbsp;&nbsp;?clear — clear log
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ══════════════════════════════════════════
+//  PASTE YOUR FIREBASE CONFIG HERE
+//  firebase.google.com → Project Settings → Your Apps → SDK setup
+// ══════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const col = collection(db, "products");
+
+// real-time sync
+onSnapshot(query(col, orderBy("createdAt")), snap => {
+  const products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  window._products = products;
+  renderShop(products);
+  log("sys", `synced — ${products.length} product(s)`);
+});
+
+function renderShop(products) {
+  const grid = document.getElementById("shop-grid");
+  if (!products.length) {
+    grid.innerHTML = '<div class="empty-shop">no products yet — use ?add in the console</div>';
+    return;
+  }
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      ${p.badge ? `<div class="product-badge ${p.badge==='popular'?'popular':''}">${esc(p.badge)}</div>` : ''}
+      <div class="product-name">${esc(p.name)}</div>
+      <div class="product-desc">${esc(p.desc||'')}</div>
+      <div class="product-footer">
+        <div class="product-price">$${esc(String(p.price))} <span>USD</span></div>
+        <button class="buy-btn" onclick="contactBuy('${esc(p.name)}')">Buy</button>
+      </div>
+    </div>`).join('');
+}
+
+window.runCommand = async function() {
+  const inp = document.getElementById("console-input");
+  const raw = inp.value.trim(); inp.value = "";
+  if (!raw) return;
+  log("info", "> " + raw);
+  const cmd = raw.split(" ")[0].toLowerCase();
+  const rest = raw.slice(cmd.length).trim();
+
+  if (cmd === "?add") {
+    const [name,desc,price,badge=""] = rest.split("|").map(s=>s.trim());
+    if (!name||!desc||isNaN(price)) return log("err","usage: ?add name | desc | price | badge?");
+    try {
+      await addDoc(col, {name, desc, price:parseFloat(price), badge, createdAt:Date.now()});
+      log("ok", `added → ${name} ($${price})`); toast(`Added "${name}"`);
+    } catch(e) { log("err", e.message); }
+
+  } else if (cmd === "?remove") {
+    const match = window._products?.find(p=>p.name.toLowerCase()===rest.toLowerCase());
+    if (!match) return log("err","not found: "+rest);
+    try { await deleteDoc(doc(db,"products",match.id)); log("ok","removed → "+match.name); toast("Removed"); }
+    catch(e) { log("err",e.message); }
+
+  } else if (cmd === "?update") {
+    const [name,field,value] = rest.split("|").map(s=>s.trim());
+    const match = window._products?.find(p=>p.name.toLowerCase()===name?.toLowerCase());
+    if (!match) return log("err","not found: "+name);
+    if (!["name","desc","price","badge"].includes(field)) return log("err","field: name | desc | price | badge");
+    try {
+      await updateDoc(doc(db,"products",match.id), {[field]: field==="price"?parseFloat(value):value});
+      log("ok",`updated ${match.name}.${field} → ${value}`); toast("Updated");
+    } catch(e) { log("err",e.message); }
+
+  } else if (cmd === "?list") {
+    const p = window._products||[];
+    if (!p.length) return log("info","db is empty");
+    p.forEach(x => log("info", `  [${x.id.slice(0,6)}] ${x.name} — $${x.price}${x.badge?' ('+x.badge+')':''}`));
+
+  } else if (cmd === "?export") {
+    const blob = new Blob([JSON.stringify(window._products||[],null,2)],{type:"application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "db.json"; a.click();
+    log("ok", `exported ${(window._products||[]).length} product(s) → db.json`);
+
+  } else if (cmd === "?clear") {
+    document.getElementById("console-log").innerHTML = "";
+  } else {
+    log("err","unknown command: "+cmd);
+  }
+};
+
+function log(type,msg) {
+  const el = document.getElementById("console-log");
+  const d = document.createElement("div"); d.className="log-line "+type; d.textContent=msg;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+window._log = log;
+</script>
+
+<script>
+function showPage(id,btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("page-"+id).classList.add("active");
+  if(btn) btn.classList.add("active");
+}
+function toggleConsole(){
+  const o=document.getElementById("overlay");
+  o.classList.toggle("open");
+  if(o.classList.contains("open")) setTimeout(()=>document.getElementById("console-input").focus(),80);
+}
+function closeOutside(e){ if(e.target===document.getElementById("overlay")) toggleConsole(); }
+function toast(msg){
+  const t=document.getElementById("toast"); t.textContent=msg;
+  t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2400);
+}
+// ── swap this with your Discord link ──
+function openDiscord(){ window.open("https://discord.com/users/YOUR_DISCORD_ID","_blank"); }
+function contactBuy(name){ window.open("https://discord.com/users/YOUR_DISCORD_ID","_blank"); }
+// backtick to open console
+document.addEventListener("keydown",e=>{ if(e.key==="`") toggleConsole(); });
+</script>
+</body>
+</html>
